@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>repo_lists</title>
+</head>
+<body>
+{% for repo in repos %}
+    <p><a href="{% url 'repo_show' repo.name %}">{{ repo.name }}</a></p>
+{% endfor %}
+</body>
+</html>
