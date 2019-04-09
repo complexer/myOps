@@ -5,8 +5,12 @@
     <title>repo_show</title>
 </head>
 <body>
-{% for file in files %}
-    <p>{{ file.name }}</p>
-{% endfor %}
+{% if file_type == 'tree' %}
+    {% for file in files %}
+        <p><a href="{% url 'file_show' repo_name file.hexsha %}">{{ file.name }}</a></p>
+    {% endfor %}
+{% else %}
+    <textarea name="file_content" id="" cols="30" rows="10">{{ files }}</textarea>
+{% endif %}
 </body>
 </html>

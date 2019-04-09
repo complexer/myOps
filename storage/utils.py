@@ -60,6 +60,9 @@ class RepoHandle(object):
         #     commit_tree_hexsha = c.tree.hexsha
         return last_commits
 
+    def repo_file_replace(self):
+        pass
+
 if __name__ == '__main__':
     repo_handle = RepoHandle('../repository/test')
 

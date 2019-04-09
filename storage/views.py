@@ -28,12 +28,6 @@ def repo_create(request):
         return render(request, 'storage/upload.html', context)
 
 def repo_show(request, repo_name):
-    '''
-    再加一个参数，如果为空就是返回repo.head.commit的tree?
-    :param request:
-    :param repo_name:
-    :return:
-    '''
     repo = Repo.objects.get(name=repo_name)
     repo_handle = RepoHandle(repo.path)
     files, type = repo_handle.repo_search(repo_handle.head_commit.tree.hexsha)
@@ -41,6 +35,8 @@ def repo_show(request, repo_name):
     context['files'] = files
     context['repo_name'] = repo_name
     if type == "tree":
+        context['file_type'] = 'tree'
+        context['forms'] = UploadFileForm()
         return render(request, 'storage/repo_show.html', context)
     else:
         raise Exception("Error Type!!!")
@@ -51,11 +47,27 @@ def file_show(request, repo_name, hexsha):
     repo_handle = RepoHandle(repo.path)
     files, type = repo_handle.repo_search(hexsha)
     context = {}
+    context['files'] = files
+    context['repo_name'] = repo_name
+    context['parent_dir_hexsha'] = hexsha
     if type == "tree":
-        pass
+        context['file_type'] = 'tree'
+        context['forms'] = UploadFileForm()
+        return render(request, 'storage/repo_show.html', context)
     elif type == "blob":
-        pass
+        context['file_type'] = 'blob'
+        return render(request, 'storage/repo_show.html', context)
     else:
         raise Exception("Error Type!!!")
+
+
+def repo_file_upload(request):
+    if request.method == "POST":
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            file_name = request.POST.get('app')
+            parent_dir_hexsha = request.POST.get('parent_dir_hexsha')
+            repo_name = request.POST.get('repo_name')
+            repo_handle = RepoHandle(Repo.objects.get(name=repo_name).path)
 
 
