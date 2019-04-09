@@ -71,3 +71,29 @@ def repo_file_upload(request):
             repo_handle = RepoHandle(Repo.objects.get(name=repo_name).path)
 
 
+def tree_show(requset, repo_name, commit=None):
+    repo = Repo.objects.get(name=repo_name)
+    tree_handle = TreeHandle(repo.path, commit)
+    context = {}
+    context['repo_name'] = repo_name
+    context['trees'] = tree_handle.tree.trees
+    context['blobs'] = tree_handle.tree.blobs
+    context['commit'] = commit
+    return render(requset, 'storage/tree_show.html', context)
+
+def tree_file_show(request, repo_name, file_path, commit=None):
+    repo = Repo.objects.get(name=repo_name)
+    tree_handle = TreeHandle(repo.path, commit)
+    context = {}
+    context['commit'] = commit
+
+    if tree_handle.tree[file_path].type == 'tree':
+        context['repo_name'] = repo_name
+        context['trees'] = tree_handle.tree[file_path].trees
+        context['blobs'] = tree_handle.tree[file_path].blobs
+    else:
+        #data_stream获取数据\r\n如何在网页站示
+        context['file_content'] = tree_handle.tree[file_path].data_stream.read()
+        # context['file_content'], type = RepoHandle(repo.path).repo_search(tree_handle.tree[file_path].hexsha)
+    return render(request, 'storage/tree_show.html', context)
+

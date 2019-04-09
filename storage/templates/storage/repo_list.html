@@ -6,7 +6,13 @@
 </head>
 <body>
 {% for repo in repos %}
-    <p><a href="{% url 'repo_show' repo.name %}">{{ repo.name }}</a></p>
+    <p><a href="
+{% if commit %}
+    {% url 'tree_last_show' repo.name %}
+{% else %}
+    {% url 'tree_show' repo.name %}
+{% endif %}
+">{{ repo.name }}</a></p>
 {% endfor %}
 </body>
 </html>

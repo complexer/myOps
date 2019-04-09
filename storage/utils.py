@@ -27,6 +27,9 @@ def repo_init(path):
 
 
 class RepoHandle(object):
+    '''
+    直接使用原生git命令来获取文件
+    '''
 
     def __init__(self, path):
         self.repo = git.Repo(path)
@@ -63,10 +66,26 @@ class RepoHandle(object):
     def repo_file_replace(self):
         pass
 
+
+class TreeHandle(object):
+    '''
+    通过操作tree来获取文件
+    repo = git.Repo(path)
+    tree = repo.tree()
+    tree['static/js/me.js']搜索文件
+    '''
+
+    def __init__(self, path, commit=None):
+        self.repo = git.Repo(path)
+        if commit is None:
+            self.tree = self.repo.tree()
+        else:
+            self.tree = self.repo.tree(commit)
+
+
+
+
 if __name__ == '__main__':
-    repo_handle = RepoHandle('../repository/test')
-
-    # repo_handle.get_repo_last_commit()
-    file_content, file_type = repo_handle.repo_search("c0b59a1c16230514dcb196010884174b3cb25923")
-
-
+    test = TreeHandle("../repository/test", '6822b3fa13d1c20249ef23764949771c52041735')
+    a = test.tree['views.py']
+    print(a)

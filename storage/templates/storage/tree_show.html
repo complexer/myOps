@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>tree_show</title>
+</head>
+<body>
+{% if trees %}
+    {% for t in trees %}
+        <p><a href="
+{% if commit %}
+    {% url 'tree_last_file_show' repo_name commit t.path %}
+{% else %}
+    {% url 'tree_file_show' repo_name t.path %}
+{% endif %}
+
+
+">{{ t.name }}</a></p>
+    {% endfor %}
+{% endif %}
+<hr>
+{% if blobs %}
+    {% for b in blobs %}
+        <p><a href="{% if commit %}{% url 'tree_last_file_show' repo_name commit b.path %}{% else %}{% url 'tree_file_show' repo_name b.path %}{% endif %}">{{ b.name }}</a></p>
+    {% endfor %}
+{% endif %}
+
+
+{% if file_content %}
+    <textarea name="" id="" cols="30" rows="10">{{ file_content }}</textarea>
+{% endif %}
+</body>
+</html>
