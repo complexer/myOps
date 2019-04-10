@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ws_show</title>
+</head>
+<body>
+{% for file in files %}
+    <a href="{% url 'ws_file_show' repo_name file_path %}{{ file }}"><p>{{ file }}</p></a>
+{% endfor %}
+</body>
+</html>

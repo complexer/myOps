@@ -1,4 +1,5 @@
 from django.shortcuts import render
+import os
 from .utils import *
 from .forms import UploadFileForm
 from .models import *
@@ -97,3 +98,33 @@ def tree_file_show(request, repo_name, file_path, commit=None):
         # context['file_content'], type = RepoHandle(repo.path).repo_search(tree_handle.tree[file_path].hexsha)
     return render(request, 'storage/tree_show.html', context)
 
+def ws_show(request, repo_name):
+    repo = Repo.objects.get(name=repo_name)
+    files = os.listdir(repo.path)
+    context = {}
+    context['files'] = files
+    context['repo_name'] = repo_name
+    return render(request, 'storage/ws_show.html', context)
+
+
+
+def ws_file_show(request, repo_name, file_path):
+    repo = Repo.objects.get(name=repo_name)
+    target_file = repo.path+file_path
+    is_dir = os.path.isdir(target_file)
+    print(file_path)
+    context = {}
+    context['repo_name'] = repo_name
+
+    if is_dir:
+        files = os.listdir(target_file)
+        context['file_path'] = file_path +'/'
+        context['files'] = files
+        return render(request, 'storage/ws_show.html', context)
+    else:
+        context['file_path'] = file_path
+        with open(target_file, 'r', encoding='utf-8') as f:
+            context['file_content'] = f.read()
+        #两种显示格式一种是文本框，一种是raw
+        # return render(request, 'storage/ws_filecontent_show.html', context)
+        return render(request, 'storage/raw.html', context)

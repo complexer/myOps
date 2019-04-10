@@ -11,6 +11,7 @@
     {% url 'tree_last_show' repo.name %}
 {% else %}
     {% url 'tree_show' repo.name %}
+{#    {% url 'ws_show' repo.name %}#}
 {% endif %}
 ">{{ repo.name }}</a></p>
 {% endfor %}
