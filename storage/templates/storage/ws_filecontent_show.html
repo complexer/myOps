@@ -5,7 +5,25 @@
     <title>ws_filecontent_show</title>
 </head>
 <body>
-<textarea name="" id="" cols="30" rows="10">{{ file_content }}</textarea>
-<input type="hidden" name="path" value="{{ file_path }}">
+
+
+<form action="{% url 'ws_file_update' %}" method="POST" id="file">
+    {% csrf_token %}
+    <textarea name="file_content" id="file_content" cols="30" rows="10" readonly="true" style="margin: 0px; width: 949px; height: 567px;">{{ file_content }}</textarea>
+    <input type="button" onclick="change_write()" value="编辑">
+    <input type="hidden" name="from" value="{{ request.get_full_path }}">
+    <input type="hidden" name="repo_name" value="{{ repo_name }}">
+    <input type="hidden" name="file_path" value="{{ file_path }}">
+    <input type="hidden" value="提交" id="sub"/>
+</form>
+<script type="text/javascript">
+    function change_write(){
+        var a = document.getElementById("file_content");
+        {#a.setAttribute('readonly', '');#}
+        a.removeAttribute('readonly');
+        var b = document.getElementById("sub");
+        b.setAttribute('type', 'submit')
+    }
+</script>
 </body>
 </html>

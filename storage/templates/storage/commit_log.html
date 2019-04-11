@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>commit_log</title>
+</head>
+<body>
+{% for c in commit_logs %}
+    <a href="{% url 'tree_last_show' repo_name c.hexsha %}"><p>{{ c.hexsha|truncatechars:12 }}</p></a>
+{% endfor %}
+</body>
+</html>

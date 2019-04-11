@@ -5,8 +5,22 @@
     <title>ws_show</title>
 </head>
 <body>
+
+<form action="{% url 'ws_file_upload' %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for field in form %}
+        {{ field }}
+    {% endfor %}
+    <input type="hidden" name="path" value="{{ file_path }}">
+    <input type="hidden" name="repo_name" value="{{ repo_name }}">
+    <input type="hidden" name="from" value="{{ request.get_full_path }}">
+    <input type="submit" value="上传" />
+</form>
+
 {% for file in files %}
-    <a href="{% url 'ws_file_show' repo_name file_path %}{{ file }}"><p>{{ file }}</p></a>
+    {% if file != '.git' %}
+        <a href="{% url 'ws_file_show' repo_name file_path %}{{ file }}"><p>{{ file }}</p></a>
+    {% endif %}
 {% endfor %}
 </body>
 </html>
