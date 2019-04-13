@@ -86,6 +86,29 @@ class TreeHandle(object):
 
 
 if __name__ == '__main__':
-    test = TreeHandle("../repository/test", '6822b3fa13d1c20249ef23764949771c52041735')
-    a = test.tree['views.py']
-    print(a)
+    # test = TreeHandle("../repository/test", '6822b3fa13d1c20249ef23764949771c52041735')
+    # a = test.tree['views.py']
+    # print(a)
+    #
+
+    repo = git.Repo("../repository/test")
+    # index = repo.index
+    # a = index.diff(None)
+    # print(a)
+
+
+    hc = repo.head.commit
+    #head与暂存区比较git diff --name-status 615df673dc3e674cdbebdc4bd3812b69b6a38b97
+    a = hc.diff()
+    print(str(a[0].change_type)+'||'+str(a[0].a_path))
+
+    # head与暂存区比较git diff --name-status 615df673dc3e674cdbebdc4bd3812b69b6a38b97
+    wdiff = hc.diff(None)
+    print(wdiff)
+
+    #比较两个历史版本差异
+    #git diff --name-status 8a90c2e03c1caf00c5189549f0af7393c51a9140 615df673dc3e674cdbebdc4bd3812b69b6a38b97
+    c = repo.commit('8a90c2e03c1caf00c5189549f0af7393c51a9140')
+    h = c.diff('615df673dc3e674cdbebdc4bd3812b69b6a38b97')
+    for x in h:
+        print(str(x.change_type) + '|' + str(x.a_path))

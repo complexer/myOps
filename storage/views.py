@@ -167,3 +167,7 @@ def ws_file_update(request):
         with open(target_file, 'w', encoding='utf-8') as f:
             f.write(file_content)
         return redirect(request.POST.get('from', reverse('repo_list')))
+
+
+def get_head_ws_diff(request):
+    pass

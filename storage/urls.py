@@ -3,6 +3,8 @@ from . import views
 
 urlpatterns = [
     path('', views.repo_list, name='repo_list'),
+    path('diff/', views.get_head_ws_diff, name='get_head_ws_diff'),
+
     path('repo_create/', views.repo_create, name='repo_create'),
 
     path('upload/', views.ws_file_upload, name='ws_file_upload'),
