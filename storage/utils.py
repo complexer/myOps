@@ -82,10 +82,16 @@ class TreeHandle(object):
         else:
             self.tree = self.repo.tree(commit)
 
+    def index_add_file(self):
+        self.index = self.repo.index
+        self.index.add('*')
 
+    def get_head_ws_diff(self):
+        return self.repo.head.commit.diff()
 
 
 if __name__ == '__main__':
+
     # test = TreeHandle("../repository/test", '6822b3fa13d1c20249ef23764949771c52041735')
     # a = test.tree['views.py']
     # print(a)
@@ -112,3 +118,7 @@ if __name__ == '__main__':
     h = c.diff('615df673dc3e674cdbebdc4bd3812b69b6a38b97')
     for x in h:
         print(str(x.change_type) + '|' + str(x.a_path))
+
+    # git的index空间就是cache空间(暂存区)
+    index = repo.index
+    print(dir(index))

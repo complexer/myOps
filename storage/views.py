@@ -1,9 +1,10 @@
 from django.shortcuts import render,redirect
-import os
+from django.http import JsonResponse
 from .utils import *
 from .forms import UploadFileForm
 from .models import *
 from django.urls import reverse
+import  json
 
 
 def repo_list(request):
@@ -135,9 +136,17 @@ def ws_file_upload(request):
             file = request.FILES['file']
             file_path = request.POST.get('file_path','')
             save_target = repo.path+file_path+file.name
+            if os.path.exists(save_target):
+                add_flage = False
+            else:
+                add_flage = True
             with open(save_target, 'wb+') as destination:
                 for chunk in file.chunks():
                     destination.write(chunk)
+
+            if add_flage:
+                tree = TreeHandle(repo.path)
+                tree.index_add_file()
             return redirect(request.POST.get('from', reverse('repo_list')))
 
 
@@ -169,5 +178,15 @@ def ws_file_update(request):
         return redirect(request.POST.get('from', reverse('repo_list')))
 
 
-def get_head_ws_diff(request):
-    pass
+def get_head_ws_diff(request, repo_name):
+    repo_info = Repo.objects.get(name=repo_name)
+    tree = TreeHandle(repo_info.path)
+    diff_data = tree.get_head_ws_diff()
+    datas = {}
+    i = 0
+    for dd in diff_data:
+        data = {}
+        data['change_type'] = dd.change_type
+        data['file_name'] = dd.a_path
+        datas['%s' % i] = data
+    return JsonResponse(datas)
