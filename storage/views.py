@@ -4,7 +4,7 @@ from .utils import *
 from .forms import UploadFileForm
 from .models import *
 from django.urls import reverse
-import  json
+
 
 
 def repo_list(request):
@@ -39,7 +39,7 @@ def tree_show(requset, repo_name, commit=None):
     :return:
     '''
     repo = Repo.objects.get(name=repo_name)
-    tree_handle = TreeHandle(repo.path, commit)
+    tree_handle = GitHandle(repo.path, commit)
     context = {}
     context['repo_name'] = repo_name
     context['trees'] = tree_handle.tree.trees
@@ -57,7 +57,7 @@ def tree_file_show(request, repo_name, file_path, commit=None):
     :return:
     '''
     repo = Repo.objects.get(name=repo_name)
-    tree_handle = TreeHandle(repo.path, commit)
+    tree_handle = GitHandle(repo.path, commit)
     context = {}
 
     if tree_handle.tree[file_path].type == 'tree':
@@ -125,7 +125,7 @@ def ws_file_show(request, repo_name, file_path):
 
 def ws_file_upload(request):
     '''
-    文件上传
+    单个文件上传
     :param request:
     :return:
     '''
@@ -135,7 +135,9 @@ def ws_file_upload(request):
             repo = Repo.objects.get(name=request.POST.get('repo_name'))
             file = request.FILES['file']
             file_path = request.POST.get('file_path','')
-            save_target = repo.path+file_path+file.name
+
+            save_path = repo.path+file_path
+            save_target = save_path+file.name
             if os.path.exists(save_target):
                 add_flage = False
             else:
@@ -144,8 +146,9 @@ def ws_file_upload(request):
                 for chunk in file.chunks():
                     destination.write(chunk)
 
+            compress_file_handle(save_target, save_path)
             if add_flage:
-                tree = TreeHandle(repo.path)
+                tree = GitHandle(repo.path)
                 tree.index_add_file()
             return redirect(request.POST.get('from', reverse('repo_list')))
 
@@ -179,14 +182,44 @@ def ws_file_update(request):
 
 
 def get_head_ws_diff(request, repo_name):
+    '''
+    获取head与暂存区的差异
+    :param request:
+    :param repo_name:
+    :return:
+    '''
     repo_info = Repo.objects.get(name=repo_name)
-    tree = TreeHandle(repo_info.path)
-    diff_data = tree.get_head_ws_diff()
+    tree = GitHandle(repo_info.path)
+    diff_res = tree.get_head_ws_diff()
     datas = {}
-    i = 0
-    for dd in diff_data:
+    diff_data_list = []
+    for dd in diff_res:
         data = {}
         data['change_type'] = dd.change_type
         data['file_name'] = dd.a_path
-        datas['%s' % i] = data
+        diff_data_list.append(data)
+    datas['body'] = diff_data_list
+    return JsonResponse(datas)
+
+def get_commit_diff(request, repo_name, commit_base_id, commit_compare_id):
+    '''
+    两个提交版本的差异
+    :param request:
+    :param repo_name:
+    :param commit_base_id:基线版本
+    :param commit_compare_id:比较版本
+    :return:
+    '''
+    repo_info = Repo.objects.get(name=repo_name)
+    tree = GitHandle(repo_info.path)
+    commit_base = tree.repo.commit(commit_base_id)
+    diff_res = commit_base.diff(commit_compare_id)
+    datas = {}
+    diff_data_list = []
+    for dd in diff_res:
+        data = {}
+        data['change_type'] = dd.change_type
+        data['file_name'] = dd.a_path
+        diff_data_list.append(data)
+    datas['body'] = diff_data_list
     return JsonResponse(datas)

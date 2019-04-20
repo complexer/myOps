@@ -1,6 +1,8 @@
 import os
 import zipfile
+import tarfile
 import git
+import filetype
 from myops.settings import *
 
 def handle_uploaded_file(f,app):
@@ -25,49 +27,64 @@ def repo_init(path):
     res = index.commit(message='test')
     return res
 
-
-class RepoHandle(object):
-    '''
-    直接使用原生git命令来获取文件
-    '''
-
-    def __init__(self, path):
-        self.repo = git.Repo(path)
-        self.git = self.repo.git
-        self.head_commit = self.repo.head.commit
-
-    def repo_search(self, file_hexsha):
-        file_type = self.git.cat_file('-t', file_hexsha)
-        file_content = self.git.cat_file('-p', file_hexsha)
-        if file_type == "tree":
-            print(file_type)
-            file_lists = []
-            for file_list in file_content.replace("\t", " ").split("\n"):
-                file_dic = {}
-                file_info = file_list.split(" ")
-                print(file_info)
-                file_dic['mode'] = file_info[0]
-                file_dic['type'] = file_info[1]
-                file_dic['hexsha'] = file_info[2]
-                file_dic['name'] = file_info[3]
-                file_lists.append(file_dic)
-            return file_lists, file_type
-        elif file_type == "blob":
-            print(file_type)
-            return file_content, file_type
-
-    def get_repo_last_commit(self):
-        last_commits = list(self.repo.iter_commits('master', max_count=20))
-        # for c in last_commits:
-        #     commit_hexsha = c.hexsha
-        #     commit_tree_hexsha = c.tree.hexsha
-        return last_commits
-
-    def repo_file_replace(self):
-        pass
+def compress_file_handle(file, file_path):
+    # jar_tool=r"C:\Program Files\Java\jdk1.8.0_192\bin\jar.exe"
+    type = filetype.guess(file)
+    print('File extension: %s' % type.extension)
+    print('File MIME type: %s' % type.mime)
+    if type.extension == "zip":
+        with zipfile.ZipFile(file) as z:
+            z.extractall(file_path)
+    elif type.extension == "gz":
+        with tarfile.open(file) as z:
+            z.extractall(file_path)
 
 
-class TreeHandle(object):
+#
+# class RepoHandle(object):
+#     '''
+#     直接使用原生git命令来获取文件
+#     git -p hexsha
+#     git -t hexsha
+#     '''
+#
+#     def __init__(self, path):
+#         self.repo = git.Repo(path)
+#         self.git = self.repo.git
+#         self.head_commit = self.repo.head.commit
+#
+#     def repo_search(self, file_hexsha):
+#         file_type = self.git.cat_file('-t', file_hexsha)
+#         file_content = self.git.cat_file('-p', file_hexsha)
+#         if file_type == "tree":
+#             print(file_type)
+#             file_lists = []
+#             for file_list in file_content.replace("\t", " ").split("\n"):
+#                 file_dic = {}
+#                 file_info = file_list.split(" ")
+#                 print(file_info)
+#                 file_dic['mode'] = file_info[0]
+#                 file_dic['type'] = file_info[1]
+#                 file_dic['hexsha'] = file_info[2]
+#                 file_dic['name'] = file_info[3]
+#                 file_lists.append(file_dic)
+#             return file_lists, file_type
+#         elif file_type == "blob":
+#             print(file_type)
+#             return file_content, file_type
+#
+#     def get_repo_last_commit(self):
+#         last_commits = list(self.repo.iter_commits('master', max_count=20))
+#         # for c in last_commits:
+#         #     commit_hexsha = c.hexsha
+#         #     commit_tree_hexsha = c.tree.hexsha
+#         return last_commits
+#
+#     def repo_file_replace(self):
+#         pass
+
+
+class GitHandle(object):
     '''
     通过操作tree来获取文件
     repo = git.Repo(path)
@@ -97,28 +114,31 @@ if __name__ == '__main__':
     # print(a)
     #
 
-    repo = git.Repo("../repository/test")
+    # repo = git.Repo("../repository/test")
     # index = repo.index
     # a = index.diff(None)
     # print(a)
 
 
-    hc = repo.head.commit
+    # hc = repo.head.commit
     #head与暂存区比较git diff --name-status 615df673dc3e674cdbebdc4bd3812b69b6a38b97
-    a = hc.diff()
-    print(str(a[0].change_type)+'||'+str(a[0].a_path))
+    # a = hc.diff()
+    # print(str(a[0].change_type)+'||'+str(a[0].a_path))
 
     # head与暂存区比较git diff --name-status 615df673dc3e674cdbebdc4bd3812b69b6a38b97
-    wdiff = hc.diff(None)
-    print(wdiff)
+    # wdiff = hc.diff(None)
+    # print(wdiff)
 
     #比较两个历史版本差异
     #git diff --name-status 8a90c2e03c1caf00c5189549f0af7393c51a9140 615df673dc3e674cdbebdc4bd3812b69b6a38b97
-    c = repo.commit('8a90c2e03c1caf00c5189549f0af7393c51a9140')
-    h = c.diff('615df673dc3e674cdbebdc4bd3812b69b6a38b97')
-    for x in h:
-        print(str(x.change_type) + '|' + str(x.a_path))
+    # c = repo.commit('8a90c2e03c1caf00c5189549f0af7393c51a9140')
+    # h = c.diff('615df673dc3e674cdbebdc4bd3812b69b6a38b97')
+    # for x in h:
+    #     print(str(x.change_type) + '|' + str(x.a_path))
 
     # git的index空间就是cache空间(暂存区)
-    index = repo.index
-    print(dir(index))
+    # index = repo.index
+    # print(dir(index))
+    # compress_file_handle("../../test/frp_0.26.0_linux_amd64.tar.gz", "../../test/")
+    # compress_file_handle("../../test/acc.war", "../../test/")
+    compress_file_handle("../../test/django_git.zip", "../../test/test1")

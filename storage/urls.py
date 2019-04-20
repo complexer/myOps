@@ -3,12 +3,16 @@ from . import views
 
 urlpatterns = [
     path('', views.repo_list, name='repo_list'),
-    path('get_head_ws_diff/<str:repo_name>/', views.get_head_ws_diff, name='get_head_ws_diff'),
 
     path('repo_create/', views.repo_create, name='repo_create'),
 
     path('upload/', views.ws_file_upload, name='ws_file_upload'),
+
     path('ws_file_update/', views.ws_file_update, name='ws_file_update'),
+
+    path('get_head_ws_diff/<str:repo_name>/', views.get_head_ws_diff, name='get_head_ws_diff'),
+    path('get_commit_diff/<str:repo_name>/<str:commit_base_id>/<str:commit_compare_id>', views.get_commit_diff, name='get_commit_diff'),
+
     path('repo/<str:repo_name>/commit_history/', views.commit_history, name='commit_history'),
     re_path(r'^tree/(?P<repo_name>.*)/workspace$', views.ws_show, name='ws_show'),
     re_path(r'^tree/(?P<repo_name>.*)/workspace/(?P<file_path>.*)$', views.ws_file_show, name='ws_file_show'),
