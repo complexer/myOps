@@ -16,6 +16,15 @@
     <input type="hidden" name="file_path" value="{{ file_path }}">
     <input type="hidden" value="提交" id="sub"/>
 </form>
+
+
+<form action="{% url 'ws_file_delete' %}" method="POST" id="file">
+    {% csrf_token %}
+    <input type="hidden" name="repo_name" value="{{ repo_name }}">
+    <input type="hidden" name="file_path" value="{{ file_path }}">
+    <input type="submit" value="删除" id="sub"/>
+</form>
+
 <script type="text/javascript">
     function change_write(){
         var a = document.getElementById("file_content");

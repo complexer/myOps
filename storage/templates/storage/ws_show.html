@@ -5,17 +5,27 @@
     <title>ws_show</title>
 </head>
 <body>
+<div>
+    <form action="{% url 'ws_file_upload' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+            {{ field }}
+        {% endfor %}
+        <input type="hidden" name="file_path" value="{{ file_path }}">
+        <input type="hidden" name="repo_name" value="{{ repo_name }}">
+        <input type="hidden" name="from" value="{{ request.get_full_path }}">
+        <input type="submit" value="上传" />
+    </form>
+</div>
 
-<form action="{% url 'ws_file_upload' %}" method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    {% for field in form %}
-        {{ field }}
-    {% endfor %}
-    <input type="hidden" name="path" value="{{ file_path }}">
-    <input type="hidden" name="repo_name" value="{{ repo_name }}">
-    <input type="hidden" name="from" value="{{ request.get_full_path }}">
-    <input type="submit" value="上传" />
-</form>
+<div>
+    <form action="{% url 'ws_dir_delete' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="file_path" value="{{ file_path }}">
+        <input type="hidden" name="repo_name" value="{{ repo_name }}">
+        <input type="submit" value="删除" />
+    </form>
+</div>
 
 {% for file in files %}
     {% if file != '.git' %}
