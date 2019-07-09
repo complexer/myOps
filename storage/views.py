@@ -13,7 +13,7 @@ def repo_list(request):
     repos = Repo.objects.all()
     context = {}
     context['repos'] = repos
-    return render(request, 'storage/templates/storage/repo_list.html', context)
+    return render(request, 'storage/repo_list.html', context)
 
 def repo_create(request):
     if request.method == 'POST':
@@ -25,12 +25,12 @@ def repo_create(request):
             repo = Repo(name=app, path=save_dir)
             repo.save()
 
-            return render(request, 'storage/templates/storage/ok.html', context={})
+            return render(request, 'storage/ok.html', context={})
     else:
         forms = UploadFileForm()
         context = {}
         context['forms'] = forms
-        return render(request, 'storage/templates/storage/upload.html', context)
+        return render(request, 'storage/upload.html', context)
 
 def tree_show(requset, repo_name, commit=None):
     '''

@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'storage',
+    'cmdb',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -79,8 +80,14 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
+    'mongodb':{
+        'ENGINE': None,
     }
 }
+
+import mongoengine
+conn = mongoengine.connection('mongodb')
 
 
 # Password validation
