@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cmdb',
     'accounts',
+    'tasks',
 ]
 
 MIDDLEWARE = [
@@ -77,17 +78,23 @@ WSGI_APPLICATION = 'myops.wsgi.application'
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    },
-    'mongodb':{
-        'ENGINE': None,
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # },
+
+    'default':{
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'myops',
+        'USER': 'root',
+        'PASSWORD': '111111',
+        'HOST': '192.168.34.20',
+        'PORT': 3306,
     }
 }
 
-import mongoengine
-conn = mongoengine.connection('mongodb')
+# import mongoengine
+# mongoengine.connect('django', host='192.168.34.20')
 
 
 # Password validation
