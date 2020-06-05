@@ -1,4 +1,4 @@
-Django==2.0
+Django==2.2.13
 filetype==1.0.5
 gitdb2==2.0.5
 GitPython==2.1.11
